@@ -21,7 +21,7 @@ const ExperienceBadge = ({ rating }) => {
   );
 };
 
-const BelievaFeedbackTable = () => {
+const BodhFeedbackTable = () => {
   const [feedback, setFeedback] = useState([]);
   
   const fetchFeedback = async () => {
@@ -142,4 +142,4 @@ const BelievaFeedbackTable = () => {
   );
 };
 
-export default BelievaFeedbackTable;
+export default BodhFeedbackTable;

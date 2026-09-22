@@ -241,24 +241,14 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { ChevronLeft, CheckCircle2, ShieldCheck, Lock, RefreshCw, Headphones, X } from "lucide-react";
 import toast from "react-hot-toast";
 import Image from "next/image";
 
 export default function SubscriptionPage() {
   const [loadingPlan, setLoadingPlan] = useState(null);
-
-  // Load the external checkout controller script inside document body context safely
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
+  const [fakeCheckoutPlan, setFakeCheckoutPlan] = useState(null);
 
   const handleBack = () => {
     if (typeof window !== "undefined") {
@@ -266,53 +256,20 @@ export default function SubscriptionPage() {
     }
   };
 
-  const handleSelectPlan = async (planName) => {
+  const handleSelectPlan = (planName) => {
     if (planName === "Free") {
       toast.success("Free Tier Activated!");
       return;
     }
 
-    try {
-      setLoadingPlan(planName);
+    setLoadingPlan(planName);
+    setFakeCheckoutPlan(planName);
+  };
 
-      // 1. Fetch live subscription id context from server endpoint architecture
-      const res = await fetch("/api/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planName }),
-      });
-      const data = await res.json();
-
-      if (!data.success) throw new Error(data.message);
-
-      // 2. Initialize the programmatic structural configuration interface parameter layout
-      const options = {
-        key: data.keyId,
-        subscription_id: data.subscriptionId, // Do not pass absolute amount for subscription entities
-        name: "Bodh Plan Setup",
-        description: `${planName} Access Subscription`,
-        image: "/logo.png", 
-        theme: { color: "#60399A" },
-        handler: function (response) {
-          toast.success("Payment authorized successfully!");
-          window.location.href = "/dashboard";
-        },
-        modal: {
-          ondismiss: function () {
-            setLoadingPlan(null);
-          }
-        }
-      };
-
-      // 3. Launch UI system viewport frame modal layer instance
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-
-    } catch (err) {
-      console.error(err);
-      toast.error(err.message || "Failed initializing verification checkout step.");
-      setLoadingPlan(null);
-    }
+  const handleFakePayment = () => {
+    toast.success(`${fakeCheckoutPlan} activated for demo purposes.`);
+    setFakeCheckoutPlan(null);
+    setLoadingPlan(null);
   };
 
   return (
@@ -539,6 +496,54 @@ export default function SubscriptionPage() {
         </p>
 
       </div>
+
+      {fakeCheckoutPlan && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 text-slate-900 shadow-2xl dark:bg-zinc-900 dark:text-white">
+            <div className="mb-5 flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-[#60399A]">Demo checkout</p>
+                <h2 className="mt-1 text-xl font-black">Complete your {fakeCheckoutPlan} plan</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setFakeCheckoutPlan(null);
+                  setLoadingPlan(null);
+                }}
+                className="rounded-full p-1 text-slate-500 hover:bg-slate-100 dark:hover:bg-zinc-800"
+                aria-label="Close demo checkout"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="rounded-xl border border-dashed border-[#60399A]/40 bg-[#60399A]/5 p-4 text-sm text-slate-600 dark:text-zinc-300">
+              This is a fake payment screen. No Razorpay window will open and no payment will be charged.
+            </div>
+
+            <div className="mt-5 flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setFakeCheckoutPlan(null);
+                  setLoadingPlan(null);
+                }}
+                className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold dark:border-zinc-700"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleFakePayment}
+                className="flex-1 rounded-xl bg-[#60399A] px-4 py-3 text-sm font-bold text-white hover:bg-[#4C2D7B]"
+              >
+                Simulate payment
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

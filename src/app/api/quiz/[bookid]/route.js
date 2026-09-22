@@ -15,7 +15,7 @@ export async function GET(req, { params }) {
 
     // Joins books and questions matching indices
     const [rows] = await pool.query(
-      `SELECT q.*, b.title as book_title 
+      `SELECT q.*, q.question AS question_text, q.correct_answer AS correct_option, b.title as book_title 
        FROM quiz_questions q
        JOIN books b ON q.book_id = b.id
        WHERE q.book_id = ?`,
