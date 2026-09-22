@@ -1,0 +1,185 @@
+@import "tailwindcss";
+
+/* 1. DEFINE SELECTOR STRATEGY FOR TAILWIND V4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* 2. SYNC SYSTEM PREFERENCE VARIABLES */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+/* 3. SYNC MANUAL TOGGLE CLASS SELECTORS OVERRIDES */
+html.dark {
+  --background: #000000; /* Turns background completely black when active */
+  --foreground: #ffffff; /* Flipped text color to clean absolute white */
+  color-scheme: dark;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease; /* Smooth transition effect */
+}
+
+
+@keyframes logoScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-logo {
+  animation: logoScale 1s ease-out forwards;
+}
+
+.splash-shell {
+  background:
+    radial-gradient(circle at 50% 34%, rgba(78, 119, 255, 0.46), transparent 27%),
+    linear-gradient(145deg, #06115f 0%, #08189b 52%, #02083f 100%);
+}
+
+.splash-glow {
+  position: absolute;
+  width: 18rem;
+  height: 18rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  animation: splashFloat 5s ease-in-out infinite;
+}
+
+.splash-glow-one {
+  top: 12%;
+  left: -8rem;
+}
+
+.splash-glow-two {
+  right: -9rem;
+  bottom: 8%;
+  animation-delay: -2.5s;
+}
+
+.splash-mark {
+  position: relative;
+  display: grid;
+  width: 6.5rem;
+  height: 6.5rem;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 2rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.08));
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.25), inset 0 1px rgba(255, 255, 255, 0.35);
+  transform: rotate(-8deg);
+}
+
+.splash-mark::before,
+.splash-mark::after {
+  position: absolute;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: #f6c96d;
+  box-shadow: 0 0 1rem rgba(246, 201, 109, 0.9);
+  content: "";
+}
+
+.splash-mark::before {
+  top: -0.8rem;
+  right: 1rem;
+}
+
+.splash-mark::after {
+  bottom: 0.5rem;
+  left: -0.9rem;
+}
+
+.splash-mark span {
+  color: #fff;
+  font-family: Georgia, serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1;
+  transform: rotate(8deg);
+}
+
+@keyframes splashFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-1rem) scale(1.04); }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 1s ease forwards;
+}
+
+.animate-fade-up-delay {
+  animation: fadeUp 1s ease forwards;
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+@keyframes loading {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.loader-bar {
+  background: white;
+  width: 0%;
+  animation: loading 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-glow,
+  .animate-logo,
+  .animate-fade-up,
+  .animate-fade-up-delay,
+  .loader-bar {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Route pages historically used a phone-width root container. Keep that
+   compact behavior on small screens and give desktop routes a usable canvas. */
+@media (min-width: 768px) {
+  main > .max-w-md,
+  main > .max-w-sm {
+    max-width: 72rem;
+  }
+}
